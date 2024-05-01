@@ -1,0 +1,19 @@
+{
+  "library": "spring-boot",
+  "dateLibrary": "java8",
+  "hideGenerationTimestamp": true,
+  "modelPackage": "dev.nj.estoreapi.model",
+  "apiPackage": "dev.nj.estoreapi",
+  "invokerPackage": "dev.nj.estoreapi",
+  "serializableModel": true,
+  "useTags": true,
+  "useGzipFeature" : true,
+  "hateoas": true,
+  "unhandledException": true,
+  "useSpringBoot3": true,
+  "useSwaggerUI": true,
+  "importMappings": {
+    "ResourceSupport":"org.springframework.hateoas.RepresentationModel",
+    "Link": "org.springframework.hateoas.Link"
+  }
+}
