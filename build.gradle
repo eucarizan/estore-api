@@ -1,38 +1,31 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.4'
-	id 'io.spring.dependency-management' version '1.1.4'
-	id 'org.hidetake.swagger.generator' version '2.19.2'
+    id 'org.springframework.boot' version '3.0.8'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+    id 'org.hidetake.swagger.generator' version '2.19.2'
 }
 
 group = 'dev.nj'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_17
 
 processResources {
     dependsOn(generateSwaggerCode)
 }
 
 swaggerSources {
-    def typeMappings = 'URI=URI'
-    def importMappings = 'URI=java.net.URI'
     eStore {
         def apiYaml = "${rootDir}/src/main/resources/api/openapi.yaml"
-	def configJson = "${rootDir}/src/main/resources/api/config.json"
-	inputFile = file(apiYaml)
-	def ignoreFile = file("${rootDir}/src/main/resources/api/.openapi-generator-ignore")
-	code {
-	    language  = 'spring'
-	    configFile = file(configJson)
-	    rawOptions = ['--ignore-file-override', ignoreFile, '--type-mappings',
-	    		  typeMappings, '--import-mappings', importMappings] as List<String>
-	    components = [models: true, apis: true, supportingFiles: 'ApiUtil.java']
-	    dependsOn validation
-	}
+        def configJson = "${rootDir}/src/main/resources/api/config.json"
+        inputFile = file(apiYaml)
+        def ignoreFile = file("${rootDir}/src/main/resources/api/.openapi-generator-ignore")
+        code {
+            language = 'spring'
+            configFile = file(configJson)
+            rawOptions = ['--ignore-file-override', ignoreFile] as List<String>
+            components = [models: true, apis: true, supportingFiles: 'ApiUtil.java']
+        }
     }
-}
-
-java {
-	sourceCompatibility = '17'
 }
 
 compileJava.dependsOn swaggerSources.eStore.code
@@ -40,25 +33,42 @@ sourceSets.main.java.srcDir "${swaggerSources.eStore.code.outputDir}/src/main/ja
 sourceSets.main.resources.srcDir "${swaggerSources.eStore.code.outputDir}/src/main/resources"
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
-	swaggerCodegen 'org.openapitools:openapi-generator-cli:6.2.1'
-	compileOnly 'io.swagger:swagger-annotations:1.6.4'
-	compileOnly 'org.springframework.boot:spring-boot-starter-validation'
-	compileOnly 'org.openapitools:jackson-databind-nullable:0.2.3'
-	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
-	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
-	implementation 'io.springfox:springfox-oas:3.0.0'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.flywaydb:flyway-core'
-	runtimeOnly 'com.h2database:h2'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // OpenAPI Starts
+    swaggerCodegen 'org.openapitools:openapi-generator-cli:6.2.1'
+    compileOnly 'io.swagger:swagger-annotations:1.6.4'
+    compileOnly 'org.springframework.boot:spring-boot-starter-validation'
+    compileOnly 'org.openapitools:jackson-databind-nullable:0.2.3'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    // required for schema in swagger generated code
+    implementation 'io.springfox:springfox-oas:3.0.0'
+    // OpenAPI Ends
+
+    // DB Starts
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'com.h2database:h2'
+    // DB Ends
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+test {
+    jvmArgs '--enable-preview'
+    useJUnitPlatform()
 }
 
+bootJar {
+    manifest {
+        attributes 'Implementation-Version': "${version}"
+        attributes 'Implementation-Title': "${project.name}"
+        attributes 'Manifest-Version': "1.0"
+    }
+}

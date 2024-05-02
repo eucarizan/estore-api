@@ -1,4 +1,4 @@
-package dev.nj.estoreapi.entity;
+package dev.nj.api.entity;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;

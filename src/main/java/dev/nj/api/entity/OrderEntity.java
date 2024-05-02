@@ -1,6 +1,6 @@
-package dev.nj.estoreapi.entity;
+package dev.nj.api.entity;
 
-import dev.nj.estoreapi.model.Order.StatusEnum;
+import dev.nj.api.model.Order.StatusEnum;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
