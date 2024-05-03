@@ -5,7 +5,7 @@ public class ErrorUtils {
   private ErrorUtils() {
   }
 
-  /*
+  /**
    * Creates and return an error object
    *
    * @param errMsgKey
