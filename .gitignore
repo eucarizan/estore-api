@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+remove_comment.sh
+copy.sh
